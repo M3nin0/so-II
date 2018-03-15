@@ -3,39 +3,39 @@
 # Ip do akira: 172.16.9.161
 # Meu ip: 172.16.9.193
 
-# Adicionando usuário para o akira
+# Adicionando usuÃ¡rio para o akira
 adduser livre
 
-# Fazendo login no usuário criado
+# Fazendo login no usuÃ¡rio criado
 login livre
 
-# Criando arquivo dentro do diretório do usuário
+# Criando arquivo dentro do diretÃ³rio do usuÃ¡rio
 > arquivo_teste.txt
 
-# Modificando permissão
+# Modificando permissÃ£o
 chmod 644 arquivo_teste.txt
 
 # Utilizando a copia remota
 scp arquivo_teste.txt javeiro@172.16.9.161:/home/javeiro
 
-# Recuperando o diretório
+# Recuperando o diretÃ³rio
 
-## Primeiro exclui o da minha máquina
+## Primeiro exclui o da minha mÃ¡quina
 rm arquivo_teste.txt
 
-## Faço a recuperação
+## FaÃ§o a recuperaÃ§Ã£o
 scp javeiro@172.16.9.161:/home/javeiro/arquivo_teste.txt novo_arquivo_teste.txt
 
 # Verificando 
 ls
 
-# Criando diretório
+# Criando diretÃ³rio
 mkdir dir_para_envio && > dir_para_envio/arquivo_de_envio.txt
 
-# Fazendo envio do diretório
+# Fazendo envio do diretÃ³rio
 scp -r dir_para_envio javeiro@172.16.9.161:/home/javeiro
 
-## Excluindo o diretório para testar
+## Excluindo o diretÃ³rio para testar
 rm -rf dir_para_envio
 
 ## Recuperando
