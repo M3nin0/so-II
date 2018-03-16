@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for numero in $(seq 1 10);
+do
+	touch arquivo$numero.txt
+done
