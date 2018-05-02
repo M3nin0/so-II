@@ -1,0 +1,120 @@
+\documentclass[
+	12pt,				% tamanho da fonte
+	%openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	%twoside,			% para impressão em recto e verso. Oposto a oneside
+	openany,			%Para nao pular folhas quando um paragrafo novo começa. Oposto de Twoside e openright
+	a4paper,			% tamanho do papel.
+	chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	english,
+	brazil				% o último idioma é o principal do documento
+]{abntex2}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc} %Pacote de linguas
+\usepackage[normalem]{ulem}
+\usepackage[T1]{fontenc}
+\usepackage{lipsum}
+\usepackage{cmap}
+\usepackage{graphicx}
+\usepackage[brazilian,hyperpageref]{backref}
+\usepackage[alf]{abntex2cite} % Citações padrão ABNT
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{color}
+\usepackage{listings}    
+\usepackage{inconsolata}
+
+\usepackage{listings}
+
+\newcommand{\imagem}[3]{
+	\begin{figure}[htb]
+		\begin{center}
+			\includegraphics[scale=0.5]{#1}
+		\end{center}
+		\caption{#2}	%\label{#3}
+	\end{figure}
+}
+
+\title{Sistemas operacionais II \\ Lista de exercícios 13}
+\date{\today}
+\autor{Felipe Menino Carlos}
+
+\setlength{\parindent}{1.3cm}
+\frenchspacing
+
+\lstset{language=sh}
+
+% Adicionando idioma
+\selectlanguage{brazil}
+
+\begin{document}
+\maketitle
+
+\chapter{Exercícios}
+
+Lista com exercícios de configurações básicas de redes.
+
+\section{Exercício 1}
+
+Listar as informações dos arquivos /etc/hostname, /etc/hosts e/etc/network/interfaces
+
+Realizando \textbf{login} com o usuário \textbr{root}.
+\begin{lstlisting}
+su
+\end{lstlisting}
+
+Listando as informações, como demonstra a figura abaixo.
+
+\imagem{exe_1.png}{Informações de hostname, hosts e interfaces}
+
+\section{Exercício 2}
+
+Alterar as informações do arquivo /etc/network/interfaces para:
+
+\begin{lstlisting}
+auto lo
+iface lo inet loopback
+auto eth0
+iface eth0 inet static
+    address 192.168.200.x
+    netmask 255.255.255.0
+    network 192.168.200.0
+    broadcast 192.168.200.255
+    gateway 192.168.200.254
+\end{lstlisting}
+
+Para realizar esta configuração, será acessado o \textbf{/etc/network/interfaces}
+
+\begin{lstlisting}
+vim /etc/network/interfaces
+\end{lstlisting}
+
+A configuração pode ser vista na figura abaixo:
+
+\imagem{exe_2.png}{Configuração de rede}
+
+Veja que neste caso o endereço utilizado foi diferente do demonstrado no exercício,pois a rede utilizada para teste também é diferente.
+
+Após configurar, será necessário reinicializar a interface de rede, utilizando:
+
+\begin{lstlisting}
+/etc/init.d/networking restart
+\end{lstlisting}
+
+\section{Exercício 3}
+
+Listar o tráfego de rede com o comando netstat.
+
+Para utilizar o comando netstat, será necessário instalar o pacote \textbf{net-tools}, veja:
+
+\begin{lstlisting}
+apt install net-tools
+\end{lstlisting}
+
+Com a instalação feita, basta executar o comando \textbf{netstat -tan}
+
+\imagem{exe_3.png}{Imagem do trafego de dados}
+
+\end{document}
