@@ -1,0 +1,331 @@
+\documentclass[
+	12pt,				% tamanho da fonte
+	openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	twoside,			% para impressão em recto e verso. Oposto a oneside
+	openany,			% Para nao pular folhas quando um paragrafo novo começa. Oposto de Twoside e openright
+	a4paper,			% tamanho do papel.
+	chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	english,
+	brazil				% o último idioma é o principal do documento
+]{abntex2}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc} % Pacote de linguas
+\usepackage[normalem]{ulem}
+\usepackage[T1]{fontenc}
+\usepackage{lipsum}
+\usepackage{cmap}
+\usepackage{graphicx}
+\usepackage[brazilian, hyperpageref]{backref}
+\usepackage[alf]{abntex2cite} % Citações padrão ABNT
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{color}
+\usepackage{listings}    
+\usepackage{inconsolata}
+%\usepackage[breaklinks=true]{hyperref} % Pacote para correção de problemas com sumário
+
+\usepackage{listings}
+
+\lstset{language=sh}
+
+\newcommand{\colcheted}{] }
+\newcommand{\colchetee}{[}
+
+% Params
+% 1 - Escala da figura
+% 2 - Caminho absoluto para a figura
+% 3 - Legenda da figura
+\newcommand{\includeImage}[3] {
+
+\begin{figure}[H]
+ 	 \centering
+  		\includegraphics[scale=#1]{#2}
+  	\caption{#3}
+\end{figure}
+
+}
+
+\title{Sistemas operacionais II \\ Trabalho 2 - Servidores FTP}
+\date{\today}
+\autor{Akira Kotsugai \\ Felipe Menino Carlos \\ Weslei Luiz}
+
+\setlength{\parindent}{1.3cm}
+\frenchspacing
+
+% Adicionando idioma
+\selectlanguage{brazil}
+
+\begin{document}
+\maketitle
+
+\newpage
+\tableofcontents
+\newpage
+\listoffigures
+% \newpage
+% \listoftables
+
+
+\chapter{Introdução}
+
+Geralmente usa-se um servidor FTP como servidor de arquivos, apenas para \textit{download} de arquivos. Mas também é possível também realizar \textit{upload} de arquivos. Além disso uma série de restrições de acesso e permissões podem ser estabelecidas. Você irá configurar um \textit{cluster} de servidores FTP de acordo com as seguintes especificações:
+
+\begin{itemize}
+	\item Serão dois servidores, um será um FTP anônimo, usado apenas para \textit{download} de arquivos. Para o outro será necessário autenticação por sftp, e deverá ser possível realizar o \textit{upload} de arquivos;
+	\item Cada máquina deverá ter um usuário \textbf{adminFtp}. Será no diretório \textbf{home} deste usuário o armazenamento dos arquivos disponibilizados pelo servidor FTP. O grupo deste usuário deverá ser o \textbf{ftpUsers}, e para o servidor não anônimo somente os usuários pertencentes a esse grupo poderão realizar o \textit{download}/\textit{upload de arquivos};
+	\item Deverá ser possível acessar os servidores tanto por um navegador como também pela linha de comando;
+	\item O cluster,deverá estar na mesma rede da máquina hospedeira (Hospedeira da VM);
+	\item A cota total para a pasta \textbf{home} do usuário \textbf{adminFTP}, nos dois servidores deverá ser de 1GB. 
+\end{itemize}
+
+\chapter{Requisitos}
+
+Neste capítulo é feito o levantamento de requisitos que serão necessários para a conclusão da atividade.
+
+\begin{itemize}
+	\item Deverão haver dois servidores;
+	\item O FTP anônimo deverá ser usado apenas para \textit{download} de arquivos; 
+	\item O FTP por autenticação sftp, deverá ser usado para realizar o \textit{upload} de arquivos, além do \textit{download};
+	\item Os dois servidores deverão ter o usuário \textbf{adminFtp};
+	\item Os arquivos disponibilizados pelo servidor FTP deverão ficar no diretório home do usuário adminFtp
+	\item O grupo do usuário \textbf{adminFtp} deverá ser o \textbf{ftpUsers};
+	\item Para o servidor não anônimo somente os usuários pertencentes ao grupo ftpUsers poderão realizar o \textit{download}/\textit{upload} de arquivos;
+	\item Deverá ser possível acessar os servidores tanto por um navegador como também pela linha de comando;
+	\item O cluster, deverá estar na mesma rede da máquina hospedeira (Máquina onde estão alocadas as VMs); 
+	\item A cota total para a pasta home do usuário \textbf{adminFTP}, nos dois servidores deverá ser de 1GB.
+\end{itemize}
+
+\chapter{Desenvolvimento}
+
+Nesta capítulo será demonstrado os passos para a configuração e testes do cluster de FTPs.
+
+\section{Topologia}
+
+A topologia aderida para este projeto, é exibida na figura abaixo.
+
+\includeImage{0.5}{../imgs/topologia.png}{Topologia da rede}
+
+\section{Instalação do sistema operacional}
+
+A instalação do sistema operacional Debian, foi realizada utilizando a menor quantidade de dependências possíveis. Foi realizado também a partição do disco, essa que pode ter sua estrutura vista abaixo:
+
+\includeImage{0.5}{../imgs/particionamento.png}{Particionamento da máquina}
+
+Essas foram as configurações realizadas no momento da instalação do sistema operacional Debian.
+
+\section{Configuração dos usuários e grupos}
+
+Para atender o requisito da existência do usuário \textbf{adminftp} em todas as máquinas, bem como o grupo \textbf{ftpusers}, veja abaixo as imagens dos comandos que foram utilizados, isso nas duas máquinas.
+
+\includeImage{0.5}{../imgs/2_configuracao_usuarios/1_adduser_adminftp.png}{Adicionando usuario adminftp}
+
+\includeImage{0.5}{../imgs/2_configuracao_usuarios/2-addgroup_ftpusers.png}{Adicionando grupo ftpusers}
+
+Após as duas adições feitas acima, o usuário \textbf{adminftp} foi adicionado ao grupo \textbf{ftpusers}, e transformado em administrador do mesmo grupo.
+
+\includeImage{0.5}{../imgs/2_configuracao_usuarios/3-gpasswd_a_adminftp_ftpusers.png}{Adicionando adminftp ao grupo ftpusers}
+
+\section{Definição dos sistemas de quota}
+
+Todas as configurações de quota dependem do pacote \textbf{quota}, é possível realizar a instalação do pacote quota com o comando:
+
+\begin{lstlisting}
+# apt-get install quota
+\end{lstlisting}
+
+
+Depois de instalado o pacote deve ser configurado, para isso, alterações no arquivo \textbf{fstab} deverão ser feitas.
+O arquivo \textbf{fstab} está localizado em /etc/fstab e precisa ser alterado com a identificação \textbf{grpquota} para que o pacote quota saiba onde serão aplicas as restrições definidas.
+
+Porém antes da alteração do arquivo /etc/fstab, será necessário parar os serviços de quota que estão sendo executados, e isso pode ser feito com o comando listado abaixo:
+
+\begin{lstlisting}
+# quotaoff -augv
+\end{lstlisting}
+
+
+Com o serviço desativado, faça a adição da identificação \textbf{grpquota}.
+
+\includeImage{0.5}{../imgs/3_quota/0_flag_quota.png}{Adição das identificações de quota}
+
+Neste caso, a partição selecionada para aplicação das regras é a \textbf{/home}
+
+Após a configuração, será necessário verificar a integridade das configurações feitas e em seguida inicializar o serviço, veja os comandos
+
+\begin{lstlisting}
+# mount /home -o remount,quota
+
+# quotacheck -augv
+
+# quotaon -augv
+\end{lstlisting}
+
+Caso a execução dos comandos acima não apresentem problemas a regra de quota pode ser definida para os usuários e grupos, veja abaixo as configurações que foram aplicadas aos usuários do grupo \textbf{ftpusers}
+
+\begin{lstlisting}
+# edquota -g ftpusers
+\end{lstlisting}
+
+\includeImage{0.5}{../imgs/3_quota/3_edquota_adminftp.png}{Definindo regra de quota para o grupo ftpusers}
+
+Ao finalizar as configurações, basta desabilitar e habilitar o serviço de quota novamente, para isso, os comandos listados abaixo foram utilizados:
+
+\begin{lstlisting}
+# quotaoff -augv
+
+# quotacheck -augv
+
+# quotaon -augv
+\end{lstlisting}
+
+
+Observação.: Em caso de dúvidas sobre o pacote quota é possível consultar o capítulo 2.5 da documentação do projeto \href{https://github.com/M3nin0/turbo-sniffle/blob/master/document.pdf}{\textbf{Cluster de máquinas}}
+
+\section{Servidores FTP}
+
+Neste capítulo as configurações dos dois servidores serão abordadas
+
+\subsection{Anônimo}
+
+O servidor FTP sem autenticação com apenas opção de \textit{download} utiliza apenas o pacote \textbf{vsftpd}, este pacote pode ser instalado com o comando \textbf{apt-get install vsftpd}.
+
+O arquivo de configuração do serviço de FTP fica localizado no diretório /etc, no ambiente deste projeto, o arquivo fica especificamente em /etc/vsftpd.conf, porém, existem casos em que o arquivo se localiza no diretório /etc/ftp/vsftpd.conf.
+
+As opções alteradas neste arquivo de configuração, e os respectivos valores que essas receberam, são listadas abaixo:
+
+\begin{itemize}
+	\item listen=YES
+	\item listen\char`_ipv6=NO
+	\item anonymous\char`_enable=YES
+	\item anon\char`_root=/home/adminftp
+	\item local\char`_enable=YES
+	\item dirmessage\char`_enable=YES
+	\item use\char`_localtime=YES
+	\item xferlog\char`_enable=YES
+	\item connect\char`_from\char`_port\char`_20=YES
+	\item xferlog\char`_file=/var/log/vsftpd.log
+	\item ascii\char`_download\char`_enable=YES
+	\item ftpd\char`_banner=Server 1 FTP without authtentication.
+	\item pam\char`_service\char`_name=vsftpd
+	\item rsa\char`_cert\char`_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+	\item rsa\char`_private\char`_key\char`_file=/etc/ssl/private/ssl-cert-snakeoil.key
+	\item ssl\char`_enable=NO
+\end{itemize}
+
+Após encontrar ou digitar estas opções basta reiniciar o serviço com os comandos:
+
+\begin{lstlisting}
+# service vsftpd stop
+
+# service vsftpd start
+\end{lstlisting}
+
+
+\subsection{Autênticado com conexão SSH (SFTP)}
+
+As configurações iniciais, citadas na seção anterior, também se aplicam ao serviço de FTP autênticado, o ponto é que neste servidor também será utilizado um serviço de criptografia, para que a conexão seja segura e garanta a confiabilidade e integridade dos dados no momento da transferência.
+
+De inicio, instale o serviço SSH na máquina que será utilizado como forma de conexão SFTP.
+
+Para começar a configuração deste serviço, será necessário acessar o arquivo \textbf{/etc/ssh/sshd\char`_config}, e alterar os campos listados abaixo.
+
+\begin{itemize}
+	\item Subsystem sftp internal-sftp
+	\item Match group *
+	\item ChrootDirectory /home/adminftp
+	\item X11Forwarding no
+	\item AllowTcpForwarding no
+	\item ForceCommand internal-sftp
+\end{itemize}
+
+Quando esses parâmetros estiverem inseridos no arquivo de configuração, basta reiniciar o serviço com os comandos:
+
+\begin{lstlisting}
+# service sshd stop
+
+# service sshd start
+\end{lstlisting}
+
+\includeImage{0.5}{../imgs/5_sftp/arquivo_de_configuracao_sshd.png}{Arquivo de configuração sshd}
+
+Após configurar o sshd, é necessário configurar o diretório o qual será a raiz do \textbf{sftp}. Para este caso, é necessário tornar o usuário root o \textit{owner} do diretório e aplicar a permissão 750, para isso os comandos abaixo:
+
+\begin{lstlisting}
+# chown root:ftpusers /home/adminftp
+# chmod 750 /home/adminftp
+\end{lstlisting}
+
+Perceba que, neste ponto o usuário já está pronto para ser utilizado, porém com as permissões definidas no diretório raiz os usuários que realizarem a conexão conseguirão realizar o download, porém o upload ficará bloquado, sendo assim, deve-se criar alguns diretórios para que os usuários realizem estas ações.
+
+% Akira ira rever esta parte
+% Realizamos a revisão junto ao professor destes requisitos
+Para ter controle sobre os \textit{uploads} foi criado um diretório nomeado \textbf{upload} com as permissões 775, seu grupo é o ftpusers e o \textit{owner} para root. Um diretório \textbf{download} também foi criado com as permissões 755.
+
+% Pode ser que não possa ser feito usando dois diretórios
+\includeImage{0.5}{../imgs/5_sftp/permissoes_download_upload.png}{Permissoes diretórios download/upload}
+
+Quando é realizado algum \textit{upload} de arquivo as permissões deste restringem sua escrita somente ao usuário que o colocou no servidor.
+
+\includeImage{0.5}{../imgs/5_sftp/permissoes_upload_arquivo.png}{Permissões de arquivos após upload no servidor SFTP}
+
+Como forma de solução deste problema é criado uma rotina cron com o usuário root. Nesta o grupo do diretório é alterado para \textbf{ftpusers} e o \textit{owner} para root. As permissões são 770. 
+Outra rotina também é criada para disponibilizar os arquivos do diretório \textbf{upload} no diretório \textbf{download}.
+
+\includeImage{0.5}{../imgs/5_sftp/rotina_crontab.png}{Rotina cron}
+
+\chapter{Testes}
+
+Para assegurar de que os requisitos levantados pelo exercício sejam concluídos, será realizado os testes das configurações e permissões de usuários/grupos e serviços.
+
+\section{Quota}
+
+As cotas definidas \textit{soft}, tem tamanho de 500MB, e a \textit{hard} 1GB, veja os testes para certificar de que os valores das quotas estão sendo respeitadas.
+
+No primeiro teste é verificado que, caso o arquivo tenha tamanho maior que o limite \textbf{hard}, um erro é exibido, e a gravação é abortada, veja:
+
+\includeImage{0.5}{../imgs/3_quota/1_test.png}{Teste de quota - Arquivo maior que o limite} 
+
+O segundo teste mostra que, se somente o limite \textbf{soft} for exedido, apenas uma mensagem é exibida ao usuário, porém  o arquivo é gravado no disco por inteiro.
+
+\includeImage{0.5}{../imgs/3_quota/2_test.png}{Teste de quota - Arquivo menor que o limite}
+
+\section{Servidores FTP}
+
+Nesta seção serão realizados os testes dos servidores FTP anônimo e autênticado
+
+Para realizar os testes de conectividade de ambos os servidores, a ferramenta \textbf{netstat} do pacote \textbf{net-tools}, foi utilizada, para verificar se no servidor que está sendo verificado, o serviço FTP, está habilitado, e caso esteja, em qual porta o serviço está disponível, como pode ser visto na figura abaixo:
+
+\includeImage{0.5}{../imgs/4_ftp_sem_autenticacao/1_test.png}{Verificação de funcionamento do serviço}
+
+Além disso, ao decorrer dos testes, será necessário utilizar um cliente FTP, para isso será realizada a instalação do cliente com o seguinte comando:
+
+\# apt-get install ftp
+
+Após isso, o ambiente pode ser considerado configurado para processeguir com os testes.
+
+\subsubsection{Anônimo}
+
+Para os testes do FTP anônimo, será realizado o acesso ao servidor via \textit{browser}, e a tentativa de leitura e escrita via linha de comando no servidor.
+
+A primeira etapa, será adquirir o endereço IP da máquina onde o servidor anônimo foi configurado, para isso, utilize o comando \textbf{ip a} na máquina.
+
+\includeImage{0.5}{../imgs/4_ftp_sem_autenticacao/2_test.png}{Endereço IP do servidor FTP anônimo}
+
+Com o endereço obtido, o primeiro teste será realizado no navegador de outra máquina, que está na mesma rede que a máquina virtual
+
+\includeImage{0.5}{../imgs/4_ftp_sem_autenticacao/3_test.png}{Acesso ao FTP anônimo utilizando o navegador}
+
+Veja que o arquivo que está sendo listado, é o mesmo presente na home do \textbf{adminftp}
+
+\includeImage{0.5}{../imgs/4_ftp_sem_autenticacao/4_test.png}{Arquivos no diretório do adminftp}
+
+Por fim, veja uma interação utilizando a linha de comando, nessa é realizando o \textit{download} e a tentativa de \textit{upload}
+
+\includeImage{0.5}{../imgs/4_ftp_sem_autenticacao/5_test.png}{Interação com o FTP via linha de comando}
+
+\subsubsection{Autênticado com conexão SSH (SFTP)}
+
+\end{document}
