@@ -1,0 +1,69 @@
+\documentclass[
+	12pt,				% tamanho da fonte
+	%openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	%twoside,			% para impressão em recto e verso. Oposto a oneside
+	openany,			%Para nao pular folhas quando um paragrafo novo começa. Oposto de Twoside e openright
+	a4paper,			% tamanho do papel.
+	chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	english,
+	brazil				% o último idioma é o principal do documento
+]{abntex2}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc} %Pacote de linguas
+\usepackage[normalem]{ulem}
+\usepackage[T1]{fontenc}
+\usepackage{lipsum}
+\usepackage{cmap}
+\usepackage{graphicx}
+\usepackage[brazilian,hyperpageref]{backref}
+\usepackage[alf]{abntex2cite} % Citações padrão ABNT
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{color}
+\usepackage{listings}    
+\usepackage{inconsolata}
+
+\usepackage{listings}
+
+\newcommand{\imagem}[3]{
+	\begin{figure}[htb]
+		\begin{center}
+			\includegraphics[scale=0.5]{#1}
+		\end{center}
+		\caption{#2}	%\label{#3}
+	\end{figure}
+}
+
+\title{Sistemas operacionais II \\ Lista de exercícios 13}
+\date{\today}
+\autor{Felipe Menino Carlos}
+
+\setlength{\parindent}{1.3cm}
+\frenchspacing
+
+\lstset{language=sh}
+
+% Adicionando idioma
+\selectlanguage{brazil}
+
+\begin{document}
+\maketitle
+
+\chapter{Introdução}
+
+Geralmente usa-se um servidor FTP como servidorde arquivos, apenas para download de arquivos.Mas também é possível também realizar upload de arquivos. Além disso uma série de restrições de acesso e permissões podem ser estabelecidas. Você irá configurar um cluster de servidores FTP de acordo com as seguintes especificações:
+\begin{itemize}
+	\item Serão dois servidores, um será um FTP anônimo, usado apenas para download de arquivos.Para o outro será necessário autenticação por sftp, e deverá ser possível realizar o upload de arquivos;
+	\item Cada máquina deverá ter um usuário \textbf{adminFtp}. Será no diretório \textbf{home} deste usuário o armazenamento dos arquivos disponibilizados pelo servidor FTP. O grupo deste usuário deverá ser o \textbf{ftpUsers}, e para o servidor não anônimo somente os usuários pertencentes a esse grupo poderão realizar o download/upload de arquivos;
+	\item Deverá ser possível acessar os servidores tanto por um navegador web (ex:ftp://192.168.1.1) como também pela linha de comando;
+	\item O cluster,deverá estar na mesma rede da máquina hospedeira (Hospedeira da VM);
+	\item A cota total para a pasta \textbf{home} do usuário \textbf{adminFTP}, nos dois servidores deverá ser de 1GB. 
+\end{itemize}
+
+
+\chapter{Levantamento de requisitos}
+
+\end{document}
