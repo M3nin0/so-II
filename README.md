@@ -4,6 +4,6 @@ Repositório de listas de exercícios realizados na matéria de sistemas operaci
 
 ## Colaboradores
 
-- Felipe (@M3nin0);
-- Weslei (@magaum);
 - Akira (@akirakotsugai);
+- Felipe (@M3nin0);
+- Weslei (@magaum).
